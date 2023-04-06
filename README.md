@@ -14,3 +14,5 @@ Powershell script that downloads all the software needed to set-up an end user m
 * Teams
 
 Note: pending to keep updated the versions in the idatio server.
+
+Ok
