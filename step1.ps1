@@ -40,9 +40,19 @@ foreach ($app in $apps) {
   }
 }
 
-foreach ($app in $apps) {
-  $fileName = [System.IO.Path]::GetFileName($app.Url)
-  $filePath = "$currentDirectory\$fileName"
-  Write-Host "Installing $filePath"
-  Start-Process $filePath -Wait
+#Prompt the user if the software should be installed
+$install = Read-Host "Do you want to install the software? (y/n)"
+
+#If Install is equal to y continue with the installation
+if ($install -eq "y") {
+  Write-Host "Installing software"
+  foreach ($app in $apps) {
+    $fileName = [System.IO.Path]::GetFileName($app.Url)
+    $filePath = "$currentDirectory\$fileName"
+    Write-Host "Installing $filePath"
+    Start-Process $filePath -Wait
+  }
+} else {
+  Write-Host "Exiting"
+  exit
 }
