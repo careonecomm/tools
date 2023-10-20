@@ -21,7 +21,7 @@ $apps = @(
     Install = ""
   },
   [pscustomobject]@{
-    Url = "http://resources.idatio.co/apps/teams.exe"
+    Url = "http://resources.idatio.co/apps/teams.msix"
     Install = ""
   }
   
