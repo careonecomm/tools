@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Stage 1: Rsync files from the remote server to the local directory, excluding *.WAV files
+src_server="kd.corecenter.co"
+src_port="2020"
+src_path="/home/opt/pbxware/pw/var/spool/asterisk/monitor/"
+dst_path="/mnt/kdccrecordings/"
+rsync_options="-azP --ignore-existing --exclude=*.WAV --exclude=*.json"  # Exclude *.WAV files
+
+# Create a file to track copied files
+track_file="/root/trackfile.txt"
+
+echo "Stage 1: Rsync from $src_server:$src_path to $dst_path (excluding *.WAV files)"
+rsync -e "ssh -p $src_port" $rsync_options --exclude-from="$track_file" $src_server:$src_path $dst_path
+
+# Stage 2: Sort files into year/month folders using find
+echo "Stage 2: Sorting files into year/month folders"
+find "$dst_path" -maxdepth 1 -type f | while read -r file; do
+  timestamp=$(stat -c %Y "$file")
+  year=$(date -d "@$timestamp" +%Y)
+  month=$(date -d "@$timestamp" +%m)
+  echo "File: $file, Year: $year, Month: $month"  # Debugging line
+
+  # Create year and month directories if they don't exist
+  mkdir -p "$dst_path$year/$month"
+
+  # Move the file to the appropriate folder
+  mv "$file" "$dst_path$year/$month/$(basename "$file")"
+
+  # Record the copied file in the tracking file
+  echo "$(basename "$file")" >> "$track_file"
+done
+
+echo "Script completed successfully!"
